@@ -37,7 +37,7 @@ public class BitmapSerializer {
                         InvalidTypeSize("Size of target value is " + byteValue.length + ". Size of int is " + INT_SIZE_IN_BYTES);
             }
             for (int i = 0; i < INT_SIZE_IN_BYTES; i++) {
-                int temp = byteValue[i];
+                long temp = (0xFF & byteValue[i]);
                 temp <<= INT_SIZE_IN_BITS - (i + 1) * BYTE_SIZE;
                 result |= temp;
             }
@@ -63,7 +63,7 @@ public class BitmapSerializer {
                         InvalidTypeSize("Size of target value is " + byteValue.length + ". Size of long is " + LONG_SIZE_IN_BYTES);
             }
             for (int i = 0; i < LONG_SIZE_IN_BYTES; i++) {
-                int temp = byteValue[i];
+                int temp = (0xFF & byteValue[i]);
                 temp <<= LONG_SIZE_IN_BITS - (i + 1) * BYTE_SIZE;
                 result |= temp;
             }
