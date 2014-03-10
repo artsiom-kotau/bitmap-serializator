@@ -116,18 +116,16 @@ public class BitmapSerializer {
         }
         byte[] resultArray = new byte[resultArraySize];
 
-        long counterOfSize = size;
-        long counterOfOffset = offset+counterOfSize-1;
-        while(counterOfSize > 0) {
+        long counterOfOffset = offset+size-1;
+        long counterOfSize = 0;
+
+        while(counterOfSize < size) {
 
             //calculate how many bits available in current data byte
             int availableBitsInDataByte = (int)(counterOfOffset%BYTE_SIZE)+1;
 
             //get target bits in value byte
-            int targetBitsInValueByte = (int)(counterOfSize%BYTE_SIZE);
-            if (targetBitsInValueByte == 0) {
-                targetBitsInValueByte = BYTE_SIZE;
-            }
+            int targetBitsInValueByte = BYTE_SIZE - (int)(counterOfSize%BYTE_SIZE);
 
             //calculate processed bits
             int processedBits = availableBitsInDataByte < targetBitsInValueByte ?
@@ -145,11 +143,11 @@ public class BitmapSerializer {
                 targetByte&=getMask(shiftValue);
             }
             //set bits to value
-            int valueByteIndex = (int)(counterOfSize/BYTE_SIZE)-1;
+            int valueByteIndex = (int)(counterOfSize/BYTE_SIZE);
             resultArray[valueByteIndex]|=targetByte;
 
             counterOfOffset-= processedBits;
-            counterOfSize-= processedBits;
+            counterOfSize+= processedBits;
         }
         return resultArray;
     }
