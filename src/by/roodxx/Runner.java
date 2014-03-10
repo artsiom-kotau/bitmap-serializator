@@ -18,11 +18,28 @@ public class Runner {
     }
 
     public static void testBitsSetting() {
-        byte data[] = new byte[3];
-        long size = 10;
+        //Random rng = new Random();
+        byte data[] = new byte[2];
+        long size = 8;
         long offset = 0;
-        byte value[] = BitmapSerializer.convertIntToBytes(1023);
-        BitmapSerializer.setValueToBitmap(data,size,offset,value);
+        int inputValue = 100;
+
+        byte inputValueArray[] = BitmapSerializer.convertIntToBytes(inputValue);
+        BitmapSerializer.setValueToBitmap(data,size,offset,inputValueArray);
+
+        byte[] outputValueArray = BitmapSerializer.getValueFromBitmap(data,size,offset);
+        if (outputValueArray.length < 4) {
+            byte[] temp = outputValueArray;
+            outputValueArray = new byte[4];
+            for(int i = temp.length-1, j=3; i>= 0; i--,j--) {
+                outputValueArray[j]=temp[i];
+            }
+        }
+
+        int outputValue = BitmapSerializer.convertBytesToInt(outputValueArray);
+        if (inputValue != outputValue) {
+            throw new InvalidStateException("Input and Output are not equals!!!");
+        }
     }
     public static void testByteConvertingForInt() {
         Random rng = new Random();

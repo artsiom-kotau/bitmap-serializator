@@ -110,7 +110,48 @@ public class BitmapSerializer {
 
     protected static byte[] getValueFromBitmap(byte[] data, long size, long offset) throws BitmapException {
 
-        return new byte[1];
+        int resultArraySize = (int)size/BYTE_SIZE;
+        if (size%BYTE_SIZE != 0) {
+            resultArraySize++;
+        }
+        byte[] resultArray = new byte[resultArraySize];
+
+        long counterOfSize = size;
+        long counterOfOffset = offset+counterOfSize-1;
+        while(counterOfSize > 0) {
+
+            //calculate how many bits available in current data byte
+            int availableBitsInDataByte = (int)(counterOfOffset%BYTE_SIZE)+1;
+
+            //get target bits in value byte
+            int targetBitsInValueByte = (int)(counterOfSize%BYTE_SIZE);
+            if (targetBitsInValueByte == 0) {
+                targetBitsInValueByte = BYTE_SIZE;
+            }
+
+            //calculate processed bits
+            int processedBits = availableBitsInDataByte < targetBitsInValueByte ?
+                    availableBitsInDataByte : targetBitsInValueByte;
+            //calculate shift  in current data byte
+            int shiftValue = Math.abs(availableBitsInDataByte-targetBitsInValueByte);
+
+            //get target byte from data
+            int dataByteIndex = (int)(counterOfOffset/BYTE_SIZE);
+            byte targetByte = data[dataByteIndex];
+            if (targetBitsInValueByte < availableBitsInDataByte) {
+                targetByte<<=shiftValue;
+            } else {
+                targetByte>>=shiftValue;
+                targetByte&=getMask(shiftValue);
+            }
+            //set bits to value
+            int valueByteIndex = (int)(counterOfSize/BYTE_SIZE)-1;
+            resultArray[valueByteIndex]|=targetByte;
+
+            counterOfOffset-= processedBits;
+            counterOfSize-= processedBits;
+        }
+        return resultArray;
     }
 
     protected static void setValueToBitmap(byte[] data, long size, long offset, byte[] value) throws BitmapException {
@@ -160,6 +201,10 @@ public class BitmapSerializer {
         }
     }
 
+    protected void checkArguments(byte[] data, BitmapCoordinates coord, byte[] value) {
+
+    }
+
     protected static byte getMask(int shiftValue) {
         int mask = 0x00;
         switch (shiftValue) {
@@ -175,7 +220,5 @@ public class BitmapSerializer {
         return (byte)mask;
     }
 
-    protected void checkArguments(byte[] data, BitmapCoordinates coord, byte[] value) {
 
-    }
 }
