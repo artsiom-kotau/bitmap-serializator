@@ -11,11 +11,19 @@ import java.util.Random;
 public class Runner {
     public static final int NUMBER_OF_TESTS = 10;
     public static void main(String[] args) {
-        testByteConvertingForInt();
+        testBitsSetting();
+        /*testByteConvertingForInt();
         testByteConvertingForLong();
-        testByteConvertingForObject();
+        testByteConvertingForObject();  */
     }
 
+    public static void testBitsSetting() {
+        byte data[] = new byte[3];
+        long size = 10;
+        long offset = 0;
+        byte value[] = BitmapSerializer.convertIntToBytes(1023);
+        BitmapSerializer.setValueToBitmap(data,size,offset,value);
+    }
     public static void testByteConvertingForInt() {
         Random rng = new Random();
         System.out.println("Test: Convert int to byte and vice versa");

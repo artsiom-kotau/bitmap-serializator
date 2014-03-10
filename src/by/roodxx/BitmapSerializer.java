@@ -108,11 +108,74 @@ public class BitmapSerializer {
         }
     }
 
-    protected static byte[] getValueFromBitmap(byte[] data, int size, int offset) throws BitmapException {
-        return new byte[size];
+    protected static byte[] getValueFromBitmap(byte[] data, long size, long offset) throws BitmapException {
+
+        return new byte[1];
     }
 
-    protected static void setValueToBitmap(byte[] data, int size, int offset, byte[] value) throws BitmapException {
+    protected static void setValueToBitmap(byte[] data, long size, long offset, byte[] value) throws BitmapException {
+
+        //calculate start byte in value
+        int startByteInValue = value.length - (int)(size/BYTE_SIZE);
+        if (size%BYTE_SIZE != 0) {
+            startByteInValue--;
+        }
+
+        long counterOfSize = size;
+        long counterOfOffset = offset;
+        for(int byteIndex = startByteInValue; byteIndex < value.length;byteIndex++) {
+
+            int targetBitAmount = (int)(counterOfSize%BYTE_SIZE);
+            if (targetBitAmount == 0) {
+                targetBitAmount = BYTE_SIZE;
+            }
+            counterOfSize-=targetBitAmount;
+
+            while (targetBitAmount != 0) {
+
+                //calculate index of processing byte in data
+                int byteDataIndex  = (int)(counterOfOffset/BYTE_SIZE);
+
+                //calculate how many bits available in current data byte
+                int availableBitsInDataByte = (int)(BYTE_SIZE - counterOfOffset%BYTE_SIZE);
+
+
+                byte temp = value[byteIndex];
+                //calculate processed bits
+                int processedBits = availableBitsInDataByte < targetBitAmount ? availableBitsInDataByte : targetBitAmount;
+                //calculate shift  in current data byte
+                int shiftValue = Math.abs(availableBitsInDataByte-targetBitAmount);
+
+                if (availableBitsInDataByte > targetBitAmount) {
+                    temp <<=shiftValue;
+                } else {
+                    temp>>=shiftValue;
+                    temp&=getMask(BYTE_SIZE-availableBitsInDataByte);
+                }
+                data[byteDataIndex] |= temp;
+
+                targetBitAmount-= processedBits;
+                counterOfOffset+= processedBits;
+            }
+        }
+    }
+
+    protected static byte getMask(int shiftValue) {
+        int mask = 0x00;
+        switch (shiftValue) {
+            case 0: {mask = 0xFF; break;}
+            case 1: {mask = 0x7F; break;}
+            case 2: {mask = 0x3F; break;}
+            case 3: {mask = 0x1F; break;}
+            case 4: {mask = 0xF; break;}
+            case 5: {mask = 0x7; break;}
+            case 6: {mask = 0x3; break;}
+            case 7: {mask = 0x1; break;}
+        }
+        return (byte)mask;
+    }
+
+    protected void checkArguments(byte[] data, BitmapCoordinates coord, byte[] value) {
 
     }
 }

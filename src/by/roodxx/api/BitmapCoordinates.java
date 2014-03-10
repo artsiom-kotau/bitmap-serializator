@@ -5,9 +5,9 @@ package by.roodxx.api;
  */
 public class BitmapCoordinates {
 
-    private int offset;
+    private long offset;
 
-    private int length;
+    private long length;
 
     public BitmapCoordinates() {
     }
@@ -17,19 +17,19 @@ public class BitmapCoordinates {
         this.length = length;
     }
 
-    public int getOffset() {
+    public long getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(long offset) {
         this.offset = offset;
     }
 
-    public int getLength() {
+    public long getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(long length) {
         this.length = length;
     }
 
