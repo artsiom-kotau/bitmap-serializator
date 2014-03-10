@@ -115,7 +115,7 @@ public class BitmapSerializer {
             resultArraySize++;
         }
         byte[] resultArray = new byte[resultArraySize];
-
+        int valueByteIndex = resultArraySize-1;
         long counterOfOffset = offset+size-1;
         long counterOfSize = 0;
 
@@ -143,11 +143,13 @@ public class BitmapSerializer {
                 targetByte&=getMask(shiftValue);
             }
             //set bits to value
-            int valueByteIndex = (int)(counterOfSize/BYTE_SIZE);
             resultArray[valueByteIndex]|=targetByte;
 
             counterOfOffset-= processedBits;
             counterOfSize+= processedBits;
+            if (counterOfSize%BYTE_SIZE == 0) {
+                valueByteIndex--;
+            }
         }
         return resultArray;
     }

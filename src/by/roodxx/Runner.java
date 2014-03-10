@@ -19,14 +19,14 @@ public class Runner {
 
     public static void testBitsSetting() {
         //Random rng = new Random();
-        byte data[] = new byte[2];
-        long size = 8;
-        long offset = 0;
-        int inputValue = 100;
+        byte data[] = new byte[5];
+        long size = 15;
+        long offset = 9;
+        int inputValue = 27554;
 
         byte inputValueArray[] = BitmapSerializer.convertIntToBytes(inputValue);
         BitmapSerializer.setValueToBitmap(data,size,offset,inputValueArray);
-
+        BitmapSerializer.setValueToBitmap(data,8,0,BitmapSerializer.convertIntToBytes(177));
         byte[] outputValueArray = BitmapSerializer.getValueFromBitmap(data,size,offset);
         if (outputValueArray.length < 4) {
             byte[] temp = outputValueArray;
